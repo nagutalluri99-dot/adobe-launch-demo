@@ -1,12 +1,34 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <!-- Adobe Launch -->
-  <script src="https://assets.adobedtm.com/6284390523f0/4baf36cdae15/launch-6823d7744018-development.min.js" async></script>
-
   <meta charset="utf-8">
   <title>About - Adobe Launch Demo</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- ACDL -->
+  <script>
+    window.adobeDataLayer = window.adobeDataLayer || [];
+
+    adobeDataLayer.push({
+      event: "pageLoaded",
+      page: {
+        pageName: "about:company",
+        siteSection: "about",
+        subSection: "company",
+        pageType: "contentPage",
+        pageCategory: "general",
+        pageURL: window.location.href,
+        pageTitle: document.title || "About - Adobe Launch Demo",
+        language: "en",
+        country: "IN",
+        environment: "demo",
+        timestamp: new Date().toISOString()
+      }
+    });
+  </script>
+
+  <!-- Adobe Launch -->
+  <script src="https://assets.adobedtm.com/6284390523f0/4baf36cdae15/launch-6823d7744018-development.min.js" async></script>
 
   <style>
     body{
@@ -52,64 +74,6 @@
       margin-right:6px;
     }
   </style>
-
-  <!-- PAGE-LEVEL digitalData for Adobe Analytics / Launch -->
-  <script>
-    (function () {
-      window.digitalData = window.digitalData || {};
-
-      // CEDDL-style page object
-      window.digitalData.page = {
-        pageInfo: {
-          pageName: "about:company",
-          pageURL: window.location.href,
-          pageTitle: document.title || "About - Adobe Launch Demo",
-          language: "en"
-        },
-        category: {
-          primaryCategory: "about",
-          subCategory: "company",
-          pageType: "contentPage",
-          pageCategory: "general"
-        },
-        attributes: {
-          country: "IN",
-          environment: "demo",
-          timestamp: new Date().toISOString()
-        }
-      };
-
-      // Events array for interactions
-      window.digitalData.events = window.digitalData.events || [];
-
-      /**
-       * Helper to push events into digitalData AND notify Launch
-       * via a CustomEvent ("digitalData:eventPushed").
-       */
-      window.digitalDataPush = function (payload) {
-        try {
-          var evtPayload = payload || {};
-          evtPayload.timestamp = new Date().toISOString();
-
-          window.digitalData.events.push(evtPayload);
-
-          // Custom event for Adobe Launch "Custom Event" rules
-          window.dispatchEvent(
-            new CustomEvent("digitalData:eventPushed", { detail: evtPayload })
-          );
-
-          console.info("digitalDataPush →", evtPayload);
-        } catch (e) {
-          console.warn("digitalDataPush failed", e);
-        }
-      };
-
-      // Helper for quick inspection in console
-      window.digitalDataGet = function () {
-        return window.digitalData.events.slice(0);
-      };
-    })();
-  </script>
 </head>
 
 <body>
@@ -129,82 +93,61 @@
   <main>
     <section class="card" style="margin-top:18px">
       <h2>About the Training</h2>
-      <p>
-        This demo site is created to practice Adobe Analytics + Adobe Launch implementation.
-        Use the navigation to visit pages on the live Google Sites pages or interact here to generate
-        digitalData events.
-      </p>
+      <p>This demo site is created to practice Adobe Analytics + Adobe Launch implementation. Use the navigation to visit pages on the live Google Sites pages or interact here to generate ACDL events.</p>
 
       <p>
         <button class="btn" data-dl-action="download_brochure">Download brochure / Contact</button>
-        <button class="btn" data-dl-action="about_request_demo" onclick="alert('Demo request sent (client-side)')">
-          Request Demo
-        </button>
+        <button class="btn" data-dl-action="about_request_demo" onclick="alert('Demo request sent (client-side)')">Request Demo</button>
       </p>
 
       <p>Useful links:</p>
       <ul>
-        <li>
-          <a href="https://sites.google.com/view/adobeanalyticstraininggk/blog" data-dl-action="link_blog_visit">
-            Open blog (Google Sites)
-          </a>
-        </li>
-        <li>
-          <a href="https://sites.google.com/view/adobeanalyticstraininggk/services" data-dl-action="link_services_visit">
-            Open services
-          </a>
-        </li>
+        <li><a href="https://sites.google.com/view/adobeanalyticstraininggk/blog" data-dl-action="link_blog_visit">Open blog (Google Sites)</a></li>
+        <li><a href="https://sites.google.com/view/adobeanalyticstraininggk/services" data-dl-action="link_services_visit">Open services</a></li>
       </ul>
     </section>
   </main>
 
-  <footer style="max-width:940px;margin:20px auto;text-align:center">
-    © Demo Company
-  </footer>
+  <footer style="max-width:940px;margin:20px auto;text-align:center">© Demo Company</footer>
 
-  <!-- CLICK TRACKING USING digitalDataPush -->
+  <!-- ACDL click tracking -->
   <script>
     (function () {
-      document.addEventListener(
-        "click",
-        function (e) {
-          var el = e.target;
+      document.addEventListener("click", function (e) {
+        var el = e.target;
 
-          // Walk up DOM tree to find data-dl-action
-          while (el && el !== document) {
-            if (el.getAttribute && el.getAttribute("data-dl-action")) {
-              var action = el.getAttribute("data-dl-action");
-              var href = el.getAttribute("href") || "";
+        while (el && el !== document) {
+          if (el.getAttribute && el.getAttribute("data-dl-action")) {
+            var action = el.getAttribute("data-dl-action");
+            var href = el.getAttribute("href") || "";
 
-              window.digitalDataPush({
-                event: "ui.click",
-                action: action,
-                element: el.tagName.toLowerCase(),
+            adobeDataLayer.push({
+              event: "ui.click",
+              action: action,
+              element: {
+                tag: el.tagName.toLowerCase(),
                 text: (el.innerText || "").trim(),
-                href: href,
-                pageName:
-                  window.digitalData &&
-                  window.digitalData.page &&
-                  window.digitalData.page.pageInfo &&
-                  window.digitalData.page.pageInfo.pageName
-                    ? window.digitalData.page.pageInfo.pageName
-                    : ""
-              });
+                href: href
+              },
+              page: {
+                pageName: "about:company"
+              },
+              timestamp: new Date().toISOString()
+            });
 
-              // Keep your special behavior for the brochure button
-              if (action === "download_brochure") {
-                window.location.href =
-                  "https://sites.google.com/view/adobeanalyticstraininggk/contact";
-              }
-
-              return;
+            // Special behavior for brochure button
+            if (action === "download_brochure") {
+              window.location.href =
+                "https://sites.google.com/view/adobeanalyticstraininggk/contact";
             }
-            el = el.parentNode;
+
+            return;
           }
-        },
-        false
-      );
+          el = el.parentNode;
+        }
+      }, false);
     })();
   </script>
 </body>
 </html>
+
