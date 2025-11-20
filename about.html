@@ -51,9 +51,7 @@
       text-decoration:none;
       font-weight:600;
     }
-    nav a:hover{
-      text-decoration:underline;
-    }
+    nav a:hover{text-decoration:underline;}
     main{
       max-width:940px;
       margin:18px auto;
@@ -93,7 +91,7 @@
   <main>
     <section class="card" style="margin-top:18px">
       <h2>About the Training</h2>
-      <p>This demo site is created to practice Adobe Analytics + Adobe Launch implementation. Use the navigation to visit pages on the live Google Sites pages or interact here to generate ACDL events.</p>
+      <p>This demo site is created to practice Adobe Analytics + Adobe Launch implementation. Use the navigation to explore pages and generate ACDL events.</p>
 
       <p>
         <button class="btn" data-dl-action="download_brochure">Download brochure / Contact</button>
@@ -102,7 +100,7 @@
 
       <p>Useful links:</p>
       <ul>
-        <li><a href="https://nagutalluri99-dot.github.io/adobe-launch-demo/blog.html" data-dl-action="link_blog_visit">Open blog (Google Sites)</a></li>
+        <li><a href="https://nagutalluri99-dot.github.io/adobe-launch-demo/blog.html" data-dl-action="link_blog_visit">Open blog</a></li>
         <li><a href="https://nagutalluri99-dot.github.io/adobe-launch-demo/services.html" data-dl-action="link_services_visit">Open services</a></li>
       </ul>
     </section>
@@ -118,8 +116,9 @@
 
         while (el && el !== document) {
           if (el.getAttribute && el.getAttribute("data-dl-action")) {
+
             var action = el.getAttribute("data-dl-action");
-            var href = el.getAttribute("href") || "";
+            var href = el.getAttribute("href") || null;
 
             adobeDataLayer.push({
               event: "ui.click",
@@ -150,4 +149,3 @@
   </script>
 </body>
 </html>
-
