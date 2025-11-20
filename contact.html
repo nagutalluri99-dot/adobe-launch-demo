@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Contact - Adobe Launch Demo</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- ACDL: Adobe Client Data Layer -->
+  <script>
+    window.adobeDataLayer = window.adobeDataLayer || [];
+
+    // Contact page state
+    adobeDataLayer.push({
+      event: "pageLoaded",
+      page: {
+        pageName: "contact:form",
+        siteSection: "contact",
+        subSection: "form",
+        pageType: "formPage",
+        pageCategory: "general",
+        pageURL: window.location.href,
+        pageTitle: document.title || "Contact - Adobe Launch Demo",
+        language: "en",
+        country: "IN",
+        environment: "demo",
+        timestamp: new Date().toISOString()
+      }
+    });
+  </script>
+
+  <!-- Adobe Launch -->
+  <script src="https://assets.adobedtm.com/6284390523f0/4baf36cdae15/launch-6823d7744018-development.min.js" async></script>
+
+  <style>
+    body{font-family:Inter,Arial,sans-serif;margin:0;background:#f5f7fb;color:#111}
+    header{background:#fff;padding:12px;border-bottom:1px solid #e6e9ee;position:sticky;top:0;z-index:10}
+    nav a{margin-left:10px;color:#0070f3;text-decoration:none;font-weight:600}
+    nav a:hover{text-decoration:underline}
+    main{max-width:920px;margin:18px auto;padding:0 16px}
+    .card{background:#fff;padding:18px;border-radius:10px;box-shadow:0 8px 28px rgba(16,24,40,0.04);margin-bottom:14px}
+    .btn{padding:10px 14px;border-radius:8px;border:1px solid #d6dbe6;background:white;cursor:pointer}
+    form label{display:block;margin-bottom:10px;font-weight:600}
+    input,textarea{width:100%;padding:10px;margin-top:6px;border-radius:6px;border:1px solid #dfe6ee}
+  </style>
+</head>
+
+<body>
+<header style="max-width:920px;margin:0 auto;display:flex;align-items:center;justify-content:space-between">
+  <h1 style="margin:0;font-size:18px">Contact</h1>
+  <nav>
+    <a href="https://sites.google.com/view/adobeanalyticstraininggk/home" data-dl-action="nav_home">Home</a>
+    <a href="https://sites.google.com/view/adobeanalyticstraininggk/about" data-dl-action="nav_about">About</a>
+    <a href="https://sites.google.com/view/adobeanalyticstraininggk/blog" data-dl-action="nav_blog">Blog</a>
+    <a href="https://sites.google.com/view/adobeanalyticstraininggk/services" data-dl-action="nav_services">Services</a>
+    <a href="https://sites.google.com/view/adobeanalyticstraininggk/contact" data-dl-action="nav_contact">Contact</a>
+  </nav>
+</header>
+
+<main>
+  <section class="card">
+    <h2>Download Our Brochure</h2>
+    <p>Click the button to download the demo brochure. (Demo behavior: opens the live contact page where you can host a PDF.)</p>
+    <button class="btn" data-dl-action="download_brochure_contact">Download Brochure (Demo)</button>
+  </section>
+
+  <section class="card">
+    <h2>Contact Form</h2>
+    <form id="contactForm">
+      <label>Name
+        <input name="name" type="text" required>
+      </label>
+      <label>Email
+        <input name="email" type="email" required>
+      </label>
+      <label>Message
+        <textarea name="message" rows="4" required></textarea>
+      </label>
+      <div style="margin-top:12px">
+        <button class="btn" type="submit" data-dl-action="form_submit">Submit</button>
+        <button class="btn" type="reset" data-dl-action="form_reset">Reset</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="card">
+    <h3>Other quick actions</h3>
+    <p>
+      <a href="https://sites.google.com/view/adobeanalyticstraininggk/services" data-dl-action="quick_open_services">Open Services (live)</a> |
+      <a href="https://sites.google.com/view/adobeanalyticstraininggk/blog" data-dl-action="quick_open_blog">Open Blog (live)</a>
+    </p>
+  </section>
+</main>
+
+<footer style="max-width:920px;margin:18px auto;text-align:center">© Demo Company</footer>
+
+<!-- ACDL click + form tracking -->
+<script>
+  (function () {
+    // CLICK HANDLING (buttons + links with data-dl-action)
+    document.addEventListener('click', function (e) {
+      var el = e.target;
+
+      while (el && el !== document) {
+        if (el.getAttribute && el.getAttribute('data-dl-action')) {
+          var action = el.getAttribute('data-dl-action');
+          var href = el.getAttribute('href') || "";
+
+          // Push click event into ACDL
+          adobeDataLayer.push({
+            event: "ui.click",
+            action: action,
+            element: {
+              tag: el.tagName.toLowerCase(),
+              text: (el.innerText || "").trim(),
+              href: href
+            },
+            page: {
+              pageName: "contact:form"
+            },
+            timestamp: new Date().toISOString()
+          });
+
+          // Demo: brochure "download" – open live contact page in new tab
+          if (action === "download_brochure_contact") {
+            window.open(
+              "https://sites.google.com/view/adobeanalyticstraininggk/contact",
+              "_blank"
+            );
+          }
+
+          return;
+        }
+        el = el.parentNode;
+      }
+    }, false);
+
+    // FORM SUBMIT HANDLING
+    document.addEventListener('submit', function (e) {
+      if (e.target && e.target.id === 'contactForm') {
+        e.preventDefault();
+
+        var form = e.target;
+        var name = form.name.value || "";
+        var email = form.email.value || "";
+        var message = form.message.value || "";
+
+        adobeDataLayer.push({
+          event: "formSubmitted",
+          form: {
+            id: "contactForm",
+            name: "Contact Demo Form",
+            fields: {
+              name: name,
+              email: email,
+              message: message
+            }
+          },
+          page: {
+            pageName: "contact:form"
+          },
+          timestamp: new Date().toISOString()
+        });
+
+        alert("Form submitted (demo). Check adobeDataLayer in console.");
+        form.reset();
+      }
+    }, false);
+  })();
+</script>
+</body>
+</html>
